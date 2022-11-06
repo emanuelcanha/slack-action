@@ -1,0 +1,38 @@
+name: 'Send slack message'
+description: 'send CI result to slack'
+inputs:
+  SLACK_BOT_TOKEN:  # id of input
+    description: 'Slack bot token'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: 'Nofity slack succes'
+      if: success()
+      uses: slackapi/slack-github-action@v1.23.0
+      with:
+        channel-id: '#ga-success'
+        slack-message: "GitHub build success \n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ input.SLACK_BOT_TOKEN }}
+    
+    - name: 'Nofity slack succes'
+      if: failure()
+      uses: slackapi/slack-github-action@v1.23.0
+      with:
+        channel-id: '#ga-success'
+        payload: |
+            {
+              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "@here GitHub build failed \n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                }
+              ]
+            }
+      env:
+        SLACK_BOT_TOKEN: ${{ input.SLACK_BOT_TOKEN }}
