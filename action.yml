@@ -1,7 +1,7 @@
 name: 'Send slack message'
 description: 'send CI result to slack'
 inputs:
-  who-to-greet:  # id of input
+  slack-bot-token:  # id of input
     description: 'Slack bot token'
     required: true
 runs:
@@ -14,7 +14,7 @@ runs:
         channel-id: '#ga-success'
         slack-message: "GitHub build success \n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
       env:
-          SLACK_BOT_TOKEN: ${{ inputs.who-to-greet }}
+          SLACK_BOT_TOKEN: ${{ inputs.slack-bot-token }}
     
     - name: 'Nofity slack succes'
       if: failure()
@@ -35,4 +35,4 @@ runs:
               ]
             }
       env:
-        SLACK_BOT_TOKEN: ${{ inputs.who-to-greet }}
+        SLACK_BOT_TOKEN: ${{ inputs.slack-bot-token }}
